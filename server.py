@@ -5,6 +5,7 @@ import room
 import user
 import device
 import position
+import live
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -12,19 +13,8 @@ app.register_blueprint(room.bp)
 app.register_blueprint(user.bp)
 app.register_blueprint(device.bp)
 app.register_blueprint(position.bp)
+app.register_blueprint(live.bp)
 CORS(app)
-
-
-# @app.route('/stream')
-# def stream():
-#     return Response(event_stream(), mimetype="text/event-stream")
-
-
-# def event_stream():
-#     import time
-#     while True:
-#         time.sleep(10)
-#         yield "data: {}\n\n".format("Hello, world!")
 
 
 @app.route('/', methods=['GET', 'OPTIONS'])

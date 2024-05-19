@@ -1,6 +1,7 @@
 from flask import (Blueprint, jsonify, request, current_app)
 from db import db
 import utils
+import learn
 import pandas as pd
 
 
@@ -26,7 +27,14 @@ def postion():
     # Get the access points
     access_points = data.get('accessPoints')
 
-    # Create a dataframe
-    utils.async_save_data(online_data=access_points, data_path=current_app.config["DATA_PATH"])
+    # Get the location (may be None)
+    room = data.get('room') 
 
+    # If room is provided, then save the data otherwise return a prediction
+    if room:
+        utils.async_save_data(online_data=access_points, room=room, data_path=current_app.config["DATA_PATH"])
+    # else:
+    #     msg = learn.predict(access_points)
+    #     return jsonify({"room": msg})
+    
     return jsonify({"message": "Data received"})
