@@ -1,7 +1,7 @@
 from flask import (Blueprint, jsonify, request, current_app)
 from db import db
 import utils
-import learn
+import model
 
 
 bp = Blueprint('position', __name__, url_prefix='/position')
@@ -28,7 +28,7 @@ def postion():
 
     # If room is provided, then save the data otherwise return a prediction
     if not room:
-        prediction = learn.predict(access_points, data_path=current_app.config["DATA_PATH"])
+        prediction = model.predict(access_points, data_path=current_app.config["DATA_PATH"])
         db.users.update_one({"userId": user_id}, {"$set": {"lastSeen": prediction}})
         return jsonify({"room": prediction})
 

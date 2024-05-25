@@ -1,8 +1,8 @@
 from flask import Blueprint, Response, jsonify
-import json
-import time
+
 
 bp = Blueprint('live', __name__, url_prefix='/live')
+
 
 # Eventually this will be a stream of data from the server
 # @bp.route('')

@@ -2,7 +2,7 @@ import pickle
 import utils
 
 
-def train_model(data_path: str):
+def train(data_path: str):
     """
     Trains a machine learning model using the provided data.
 

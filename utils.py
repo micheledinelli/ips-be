@@ -1,7 +1,7 @@
 import os
 import threading
 import pandas as pd
-import learn
+import model
 import pickle
 import errors
 from sklearn.ensemble import RandomForestClassifier
@@ -56,7 +56,7 @@ def save_data(online_data: list, room: str, data_path: str) -> None:
         file_path = os.path.join(data_path, 'data.pkl')
         df.to_pickle(file_path)
         
-        learn.train_model(data_path=data_path)
+        model.train(data_path=data_path)
     except FileNotFoundError:
         online_data_df = pd.DataFrame([online_data])
         file_path = os.path.join(data_path, 'data.pkl')
