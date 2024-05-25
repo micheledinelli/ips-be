@@ -52,11 +52,11 @@ def save_data(online_data: list, room: str, data_path: str) -> None:
         df = pd.concat([data, online_data_df], ignore_index=True)
         df.fillna(0, inplace=True)
 
-        learn.train_model(data_path=data_path)
-        
         # Save the concatenated DataFrame to a pickle file
         file_path = os.path.join(data_path, 'data.pkl')
         df.to_pickle(file_path)
+        
+        learn.train_model(data_path=data_path)
     except FileNotFoundError:
         online_data_df = pd.DataFrame([online_data])
         file_path = os.path.join(data_path, 'data.pkl')
@@ -94,7 +94,7 @@ def process_online_data(online_data: list, room=None) -> dict:
     """
     sample = {}
     for ap in online_data:
-        id = ap.get("bssid") + "-" + ap.get("ssid")    
+        id = ap.get("ssid")    
         quality = ap.get("quality")
         sample[id] = quality
     if room:
@@ -210,14 +210,14 @@ def preprocess_sample(sample: dict, data_path: str):
         raise errors.DataNotFound()
    
     # Some APs may not be in the model, so we need to fill in the missing values
+    sample = process_online_data(sample, room=None)
     X = pd.DataFrame([sample])
-
+    
     # X has to contain all the columns in data, if X miss some columns it has to be added with the median value of the column
     missing_columns = set(data.drop(columns=["room"]).columns) - set(X.columns)
+    
     for col in missing_columns:
-        # Fill missing columns with the median value from the training data
-        median_value = data[col].median()
-        X[col] = median_value
+        X[col] = 0
         
     # X has to contain all the columns in data, if X has more columns than data, it has to be removed
     X = X[data.drop(columns=["room"]).columns]
