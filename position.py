@@ -24,7 +24,7 @@ def postion():
     access_points = data.get('accessPoints')
 
     # Get the location (may be None)
-    room = data.get('room') 
+    room = data.get('room')
 
     # If room is provided, then save the data otherwise return a prediction
     if not room:
