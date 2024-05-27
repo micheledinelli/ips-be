@@ -105,9 +105,12 @@ def live():
                     "coordinates": [
                         [
                             [0, 0],
-                            [0, 150],
-                            [100, 100],
-                            [100, 0],
+                            [300, 0],
+                            [350, 100],
+                            [300, 210],
+                            [150, 300],
+                            [50, 250],
+                            [0, 200],
                             [0, 0]
                         ]
                     ]
@@ -116,19 +119,20 @@ def live():
             {
                 "type": "Feature",
                 "properties": {
-                    "name": "kitchen",
-                    "roomId": 1,
+                    "name": "Assembly Line",
+                    "roomId": 101,
                     "users": [],
-                    "type": "room"
+                    "type": "room",
+                    "color": "green"
                 },
                 "geometry": {
                     "type": "Polygon",
                     "coordinates": [
                         [
                             [10, 10],
-                            [30, 10],
-                            [30, 30],
-                            [10, 30],
+                            [180, 10],
+                            [180, 100],
+                            [10, 100],
                             [10, 10]
                         ]
                     ]
@@ -137,20 +141,21 @@ def live():
             {
                 "type": "Feature",
                 "properties": {
-                    "name": "living-room",
-                    "roomId": 2,
+                    "name": "Quality Control",
+                    "roomId": 205,
                     "users": [],
-                    "type": "room"
+                    "type": "room",
+                    "color": "purple"
                 },
                 "geometry": {
                     "type": "Polygon",
                     "coordinates": [
                         [
-                            [40, 10],
-                            [60, 10],
-                            [60, 30],
-                            [40, 30],
-                            [40, 10]
+                            [200, 10],
+                            [290, 10],
+                            [340, 100],
+                            [200, 100],
+                            [200, 10]
                         ]
                     ]
                 }
@@ -158,20 +163,66 @@ def live():
             {
                 "type": "Feature",
                 "properties": {
-                    "name": "android",
-                    "roomId": 3,
+                    "name": "Packaging",
+                    "roomId": 309,
                     "users": [],
-                    "type": "room"
+                    "type": "room",
+                    "color": "blue"
                 },
                 "geometry": {
                     "type": "Polygon",
                     "coordinates": [
                         [
-                            [70, 10],
-                            [90, 10],
-                            [90, 30],
-                            [70, 30],
-                            [70, 10]
+                            [10, 110],
+                            [100, 110],
+                            [100, 190],
+                            [10, 190],
+                            [10, 110]
+                        ]
+                    ]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Storage",
+                    "roomId": 403,
+                    "users": [],
+                    "type": "room",
+                    "color": "orange"
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [60, 200],
+                            [210, 200],
+                            [210, 250],
+                            [160, 280],
+                            [60, 240],
+                            [60, 200]
+                        ]
+                    ]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Maintenance",
+                    "roomId": 507,
+                    "users": [],
+                    "type": "room",
+                    "color": "red"
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [120, 110],
+                            [300, 110],
+                            [300, 190],
+                            [120, 190],
+                            [120, 110]
                         ]
                     ]
                 }
@@ -186,14 +237,16 @@ def live():
     users_list = list(users_cursor)   
 
     # Create a dictionary to map roomIds to users
-    room_users = {"kitchen": [], "living-room": [], "android": []}
+    rooms_cursor = db.rooms.find()
+    rooms_list = list(rooms_cursor)
+    room_users = {room.get("name"): [] for room in rooms_list}
     not_seen = []
 
     # For each user, read the lastSeen property and update the corresponding room's users list
     for user in users_list:
         last_seen_room = user.get("lastSeen")
         user_id = user.get("userId")
-        if last_seen_room and user_id:
+        if last_seen_room != None and user_id:
             room_users[last_seen_room].append(user_id)
         else:
             not_seen.append(user_id)
