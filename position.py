@@ -62,10 +62,7 @@ def postion():
             return jsonify({"message": "Room not found"}), 404
         
         # Check if the user has access to the room
-        room_user_last_seen = db.rooms.find_one({"name": user["lastSeen"]})
-        userAccess = checkUserAccess(user=user, room=room, 
-                                     room_user_last_seen=room_user_last_seen, 
-                                     ble_devices=ble_devices)
+        userAccess = checkUserAccess(user=user, room=room, ble_devices=ble_devices)
 
         # Check if the room requires any devices
         required_devices = getRequiredDevices(room=room)
@@ -81,12 +78,11 @@ def postion():
     utils.async_save_data(online_data=access_points, room=room, data_path=current_app.config["DATA_PATH"])
     return jsonify({"message": "Data received"})
 
-def checkUserAccess(user, room, room_user_last_seen, ble_devices) -> ViolationType:
+def checkUserAccess(user, room, ble_devices) -> ViolationType:
     # The user has to be granted access and has to hold devices required
     # It is ensured in the backend that if a room is public there are no devices required and no granted users
     # It would be cool if this method returns a list of violations, maybe in the future
     required_devices_ids = room["devices"]
-    required_device_ids_last_seen = room_user_last_seen["devices"]
     granted_user_ids = room["grantedTo"]
     
     # Check if the user can access the new room
@@ -101,9 +97,12 @@ def checkUserAccess(user, room, room_user_last_seen, ble_devices) -> ViolationTy
     # If the new room is different from the current room it means user left the room
     # so we have to ensure that the user is not holding any devices required in the previous room
     # (ble devices has to have no intersection with required devices)
-    if (room_user_last_seen["name"] != room["name"] 
-        and set(required_device_ids_last_seen).intersection(set(ble_devices))):
-        return ViolationType.LEFT_ROOM_WITH_REQUIRED_DEVICES        
+    if user.get("lastSeen") is not None:
+        room_user_last_seen = db.rooms.find_one({"name": user["lastSeen"]})
+        required_device_ids_last_seen = room_user_last_seen["devices"]
+        if (room_user_last_seen["name"] != room["name"] 
+            and set(required_device_ids_last_seen).intersection(set(ble_devices))):
+            return ViolationType.LEFT_ROOM_WITH_REQUIRED_DEVICES        
 
     return ViolationType.ACCESS_GRANTED
 

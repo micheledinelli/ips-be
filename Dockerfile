@@ -11,7 +11,7 @@ COPY . /app
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Install curl and ping
-RUN apt-get update && apt-get install -y curl
+# RUN apt-get update && apt-get install -y curl
 
 # Make port 8888 available to the world outside this container
 EXPOSE 8888
