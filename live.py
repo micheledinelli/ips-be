@@ -247,6 +247,10 @@ def live():
         last_seen_room = user.get("lastSeen")
         user_id = user.get("userId")
         if last_seen_room != None and user_id:
+
+            if last_seen_room == "Android":
+                last_seen_room = "Storage"
+
             room_users[last_seen_room].append(user_id)
         else:
             not_seen.append(user_id)

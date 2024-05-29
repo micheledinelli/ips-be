@@ -6,6 +6,6 @@ class ModelNotFound(Exception):
 
 class DataNotFound(Exception):
     """Raised when the data is not found"""
-    def __init__(self, message="Please provide data before training"):
+    def __init__(self, message="Please provide data before"):
         self.message = message
         super().__init__(self.message)

@@ -60,7 +60,12 @@ def update_room(room_id):
     room = get_room_by_id(room_id)
 
     # If the room is found, update its attributes
-    if room:    
+    if room:
+            
+        # If the grantedTo list is empty, the room is public
+        if len(data["grantedTo"]) == 0:
+            data["public"] = True
+
         db.rooms.update_one({"roomId": room_id}, {
             "$set": {
                 "name": data["name"],
