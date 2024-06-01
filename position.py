@@ -85,6 +85,8 @@ def checkUserAccess(user, room, ble_devices, room_devices) -> ViolationType:
     required_devices_ids = room["devices"]
     required_devices_names = [device["name"] for device in room_devices]
     
+    # Keep only the ble devices with at least -70 rssi
+    ble_devices = [device for device in ble_devices if device["rssi"] > -70]
     ble_devices_ids = [device["deviceId"] for device in ble_devices]
     ble_devices_names = [device["name"] for device in ble_devices]
     

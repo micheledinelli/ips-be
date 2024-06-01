@@ -62,8 +62,8 @@ def update_room(room_id):
     # If the room is found, update its attributes
     if room:
             
-        # If the grantedTo list is empty, the room is public
-        if len(data["grantedTo"]) == 0:
+        # If the grantedTo list is empty and the devices list is empty, the room is public
+        if len(data["grantedTo"]) == 0 and len(data["devices"]) == 0:
             data["public"] = True
 
         db.rooms.update_one({"roomId": room_id}, {
