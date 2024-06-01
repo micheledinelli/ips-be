@@ -57,12 +57,14 @@ def postion():
 
         # Find the room in the database
         room = db.rooms.find_one({"name": prediction})
-
         if not room:
             return jsonify({"message": "Room not found"}), 404
         
+        room_devices_cursor = db.devices.find({"deviceId": {"$in": room["devices"]}})
+        room_devices = list(room_devices_cursor)
+
         # Check if the user has access to the room
-        userAccess = checkUserAccess(user=user, room=room, ble_devices=ble_devices)
+        userAccess = checkUserAccess(user=user, room=room, ble_devices=ble_devices, room_devices=room_devices)
 
         # Check if the room requires any devices
         required_devices = getRequiredDevices(room=room)
@@ -78,12 +80,17 @@ def postion():
     utils.async_save_data(online_data=access_points, room=room, data_path=current_app.config["DATA_PATH"])
     return jsonify({"message": "Data received"})
 
-def checkUserAccess(user, room, ble_devices) -> ViolationType:
+def checkUserAccess(user, room, ble_devices, room_devices) -> ViolationType:
     # The user has to be granted access and has to hold devices required
     # It is ensured in the backend that if a room is public there are no devices required and no granted users
     # It would be cool if this method returns a list of violations, maybe in the future
-    required_devices_ids = room["devices"]
     granted_user_ids = room["grantedTo"]
+    
+    required_devices_ids = room["devices"]
+    required_devices_names = [device["name"] for device in room_devices]
+    
+    ble_devices_ids = [device["deviceId"] for device in ble_devices]
+    ble_devices_names = [device["name"] for device in ble_devices]
     
     # Check if the user can access the new room
     if not room["public"] and user["userId"] not in granted_user_ids:
@@ -91,19 +98,22 @@ def checkUserAccess(user, room, ble_devices) -> ViolationType:
     
     # Check if the user holds the required devices for the new room
     # (required devices has to be a subset of the ble devices)
-    if not set(required_devices_ids).issubset(set(ble_devices)):
+    # It is check both the id and the name of the device
+    if ((not set(required_devices_ids).issubset(set(ble_devices_ids))) and 
+        (not set(required_devices_names).issubset(set(ble_devices_names)))):
         return ViolationType.NOT_HOLDING_REQUIRED_DEVICES
 
     # If the new room is different from the current room it means user left the room
     # so we have to ensure that the user is not holding any devices required in the previous room
-    # (ble devices has to have no intersection with required devices)
+    # (ble devices set has to have no intersection with required devices)
     if user.get("lastSeen") is not None:
         room_user_last_seen = db.rooms.find_one({"name": user["lastSeen"]})
         required_device_ids_last_seen = room_user_last_seen["devices"]
         if (room_user_last_seen["name"] != room["name"] 
-            and set(required_device_ids_last_seen).intersection(set(ble_devices))):
-            return ViolationType.LEFT_ROOM_WITH_REQUIRED_DEVICES        
-
+            and (set(required_device_ids_last_seen).intersection(set(ble_devices_ids)) or 
+            set(required_devices_names).intersection(set(ble_devices_names)))):
+            return ViolationType.LEFT_ROOM_WITH_REQUIRED_DEVICES
+               
     return ViolationType.ACCESS_GRANTED
 
 def getRequiredDevices(room):
