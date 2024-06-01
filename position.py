@@ -51,10 +51,6 @@ def postion():
         # Predict where the user is
         prediction = model.predict(access_points, data_path=current_app.config["DATA_PATH"])
         
-        # For development purposes map Android room (which is where the emulator is to Storage)
-        if prediction == "Android":
-            prediction = "Maintenance"
-
         # Find the room in the database
         room = db.rooms.find_one({"name": prediction})
         if not room:
