@@ -9,11 +9,11 @@ import live
 
 app = Flask(__name__)
 app.config.from_object('config')
-app.register_blueprint(room.bp)
-app.register_blueprint(user.bp)
-app.register_blueprint(device.bp)
-app.register_blueprint(position.bp)
-app.register_blueprint(live.bp)
+app.register_blueprint(room.bp, url_prefix='/api')
+app.register_blueprint(user.bp, url_prefix='/api')
+app.register_blueprint(device.bp, url_prefix='/api')
+app.register_blueprint(position.bp, url_prefix='/api')
+app.register_blueprint(live.bp, url_prefix='/api')
 CORS(app)
 
 
