@@ -14,7 +14,7 @@ app.register_blueprint(user.bp)
 app.register_blueprint(device.bp)
 app.register_blueprint(position.bp)
 app.register_blueprint(live.bp)
-CORS(app)
+# CORS(app)
 
 
 @app.route('/', methods=['GET', 'OPTIONS'])
