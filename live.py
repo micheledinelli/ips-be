@@ -3,7 +3,7 @@ from flask import Blueprint, Response, jsonify
 from db import db
 
 
-bp = Blueprint('live', __name__, url_prefix='/live')
+bp = Blueprint('live', __name__, url_prefix='/api/live')
 
 
 # Eventually this will be a stream of data from the server

@@ -5,7 +5,7 @@ import utils
 import model
 
 
-bp = Blueprint('position', __name__, url_prefix='/position')
+bp = Blueprint('position', __name__, url_prefix='/api/position')
 
 
 class ViolationType(enum.Enum):

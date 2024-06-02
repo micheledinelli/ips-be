@@ -3,7 +3,7 @@ from bson.json_util import dumps
 from db import db
 
 
-bp = Blueprint('rooms', __name__, url_prefix='/rooms')
+bp = Blueprint('rooms', __name__, url_prefix='/api/rooms')
 
 
 @bp.route('', methods=['GET'])
