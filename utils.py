@@ -222,3 +222,17 @@ def preprocess_sample(sample: dict, data_path: str):
     # X has to contain all the columns in data, if X has more columns than data, it has to be removed
     X = X[data.drop(columns=["room"]).columns]
     return X
+
+
+def get_dataset_path(data_path) -> str:
+    """
+    Returns the path to the data directory.
+
+    Returns:
+        str: The path to the data directory.
+    """
+    try:
+        file_path = os.path.join(data_path, 'data.pkl')
+        return file_path
+    except FileNotFoundError:
+        return pd.DataFrame()

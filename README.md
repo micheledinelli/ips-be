@@ -2,6 +2,7 @@
 
 [![Docker Pulls](https://badgen.net/docker/pulls/micheledinelli/frontend?icon=docker&label=pulls)](https://hub.docker.com/r/micheledinelli/frontend/)
 [![Docker Image Size](https://badgen.net/docker/size/micheledinelli/frontend?icon=docker&label=image%20size)](https://hub.docker.com/r/micheledinelli/frontend)
+[![Build and Push Docker Image](https://github.com/micheledinelli/ips-be/actions/workflows/push-to-docker.yaml/badge.svg)](https://github.com/micheledinelli/ips-be/actions/workflows/push-to-docker.yaml)
 
 <!-- [![HitCount](https://hits.dwyl.com/micheledinelli/sca-frontend.svg)](https://hits.dwyl.com/micheledinelli/sca-frontend) -->
 

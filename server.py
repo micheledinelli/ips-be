@@ -1,7 +1,7 @@
-from flask import (Flask, jsonify, Response, logging, request)
+from flask import (Flask, jsonify, send_file)
 from flask_cors import CORS
-import utils
 import room
+import utils
 import user
 import device
 import position
@@ -29,6 +29,12 @@ def health_check():
         description: Service status
     """
     return jsonify({"health": "up"})
+
+
+@app.route('/api/dataset', methods=['GET', 'OPTIONS'])
+def get_dataset():
+    file_path = utils.get_dataset_path(data_path=app.config['DATA_PATH'])
+    return send_file(file_path, mimetype='application/octet-stream', as_attachment=True, download_name='data.pkl')
 
 
 if __name__ == '__main__':
