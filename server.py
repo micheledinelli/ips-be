@@ -36,6 +36,7 @@ def health_check():
 @app.route('/api/dataset', methods=['GET', 'OPTIONS'])
 def get_dataset():
     file_path = utils.get_dataset_path(data_path=app.config['DATA_PATH'])
+    print(file_path)
     return send_file(file_path, mimetype='application/octet-stream', as_attachment=True, download_name='data.pkl')
 
 
@@ -50,7 +51,8 @@ def post_dataset():
         return jsonify({"error": "No selected file"}), 400
 
     if file and file.filename.endswith('.pkl'):
-        file.save(os.path.join(app.config['DATA_PATH'], 'data.pkl'))
+        print(os.path.join(app.config['DATA_PATH'], 'data.pkl'))
+        file.save(os.path.join(app.config['DATA_PATH'], 'data.pkl'), overwrite=True)
         model.train(data_path=app.config['DATA_PATH'])
         return jsonify({"message": "Dataset uploaded"}), 200
     else:
