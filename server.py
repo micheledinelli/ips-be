@@ -1,4 +1,4 @@
-from flask import (Flask, jsonify, send_file)
+from flask import (Flask, jsonify, request, send_file)
 from flask_cors import CORS
 import room
 import utils
@@ -6,6 +6,8 @@ import user
 import device
 import position
 import live
+import os
+import model
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -36,6 +38,24 @@ def get_dataset():
     file_path = utils.get_dataset_path(data_path=app.config['DATA_PATH'])
     return send_file(file_path, mimetype='application/octet-stream', as_attachment=True, download_name='data.pkl')
 
+
+@app.route('/api/dataset', methods=['POST'])
+def post_dataset():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file and file.filename.endswith('.pkl'):
+        file.save(os.path.join(app.config['DATA_PATH'], 'data.pkl'))
+        model.train(data_path=app.config['DATA_PATH'])
+        return jsonify({"message": "Dataset uploaded"}), 200
+    else:
+        return jsonify({"error": "Unsupported file type"}), 400
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8888, debug=True)
