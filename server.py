@@ -53,6 +53,7 @@ def post_dataset():
 
     if file and file.filename.endswith('.pkl'):
         app.logger.debug(os.path.join(app.config['DATA_PATH'], 'data.pkl'))
+        print(os.path.join(app.config['DATA_PATH'], 'data.pkl'))
         file.save(os.path.join(app.config['DATA_PATH'], 'data.pkl'))
         model.train(data_path=app.config['DATA_PATH'])
         return jsonify({"message": "Dataset uploaded"}), 200
